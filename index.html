@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content="本地字体检测工具">
+  <meta name="description" content="Local Font Checker for web,检查所安装字体,检查本机是否安装某字体,Momo's Blog, LuckyMomo">
+  <title>Local Font Checker</title>
+  <style>
+    /*全局设置*/
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body::-webkit-scrollbar {
+      display: none
+    }
+
+    p {
+      margin: 0;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+
+    #m-app {
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      padding: 10px 50px 80px;
+      box-sizing: border-box;
+    }
+
+    .m-p-action {
+      margin: 20px auto;
+      max-width: 1100px;
+      width: 100%;
+      font-size: 35px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .m-p-other,
+    .m-p-github {
+      position: fixed;
+      right: 50px;
+      bottom: 70px;
+      background-color: #eff3f6;
+      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+      color: #24292e;
+      border: 1px solid rgba(27, 31, 35, .2);
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 12px;
+      z-index: 99;
+    }
+
+    .m-p-help {
+      position: fixed;
+      right: 50px;
+      top: 50px;
+      width: 30px;
+      height: 30px;
+      color: #666666;
+      z-index: 2;
+      line-height: 30px;
+      font-weight: bolder;
+      border-radius: 50%;
+      border: 1px solid rgba(27, 31, 35, .2);
+      cursor: pointer;
+      background-color: #eff3f6;
+      background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+    }
+
+    .m-p-github:hover,
+    .m-p-other:hover,
+    .m-p-help {
+      opacity: 0.9;
+    }
+
+    .m-p-other {
+      bottom: 30px;
+    }
+
+    /*顶部信息录入*/
+    .m-p-temp-url,
+    .m-p-intro {
+      padding-top: 2px;
+      padding-bottom: 6px;
+      width: 100%;
+      color: #999999;
+      text-align: left;
+      font-style: italic;
+      word-break: break-all;
+    }
+
+    .m-p-intro {
+      padding-top: 0;
+    }
+
+    .m-p-input-container input {
+      margin-bottom: 10px;
+      margin-right: 12px;
+      display: block;
+      width: 100%;
+      padding: 16px;
+      font-size: 24px;
+      border-radius: 4px;
+      box-shadow: none;
+      box-sizing: border-box;
+      color: #444444;
+      border: 1px solid #cccccc;
+    }
+
+    .m-p-input-container .btn-group {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .m-p-input-container .btn-group div {
+      position: relative;
+      height: 60px;
+      width: 49%;
+      line-height: 60px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #eeeeee;
+      background-color: #3D8AC7;
+      opacity: 1;
+      transition: 0.3s all;
+    }
+
+    .m-p-input-container .btn-group div:hover {
+      opacity: 0.9;
+    }
+
+    .m-p-tips {
+      width: 100%;
+      color: #999999;
+      text-align: left;
+      font-style: italic;
+      word-break: break-all;
+    }
+
+    .m-p-tips p {
+      width: 100px;
+      display: inline-block;
+    }
+
+    .m-p-font-item {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      padding: 0 10px;
+      width: 100%;
+      height: 40px;
+      color: white;
+      cursor: pointer;
+      line-height: 40px;
+      text-align: left;
+      border-radius: 4px;
+      box-sizing: border-box;
+      border: solid 1px #eeeeee;
+      background-color: #dddddd;
+      overflow: hidden;
+    }
+
+    .m-p-font-item-installed {
+      background-color: #0ACD76;
+    }
+
+    .m-p-font-item-uninstalled {
+      background-color: #DC5350;
+    }
+  </style>
+</head>
+
+<body>
+  <section id="m-app" v-cloak>
+    <!--顶部操作提示-->
+    <section class="m-p-action g-box">{{tips}}</section>
+    <a class="m-p-help" target="_blank"
+      href="https://www.zhangxinxu.com/wordpress/2018/02/js-detect-suppot-font-family/">?</a>
+    <a class="m-p-github" target="_blank" href="https://github.com/Momo707577045/local-font-checker">github</a>
+    <a class="m-p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
+
+    <!--文件载入-->
+    <div class="m-p-temp-url">测试字体：'PingFang SC','Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Microsoft YaHei',
+      '微软雅黑', Arial, sans-serif</div>
+    <section class="m-p-input-container">
+      <input type="text" v-model="fonts" placeholder="请输入所需测试字体，以英文逗号分隔">
+      <input type="text" v-model="testText" placeholder="请输入测试文案">
+      <div class="btn-group">
+        <div @click="checkFonts">字体测试</div>
+        <div @click="getInstallFonts">获取已安装字体</div>
+      </div>
+    </section>
+    <section class="m-p-font-list">
+      <div class="m-p-font-item" :class="`m-p-font-item-${fontItem.installed ? '' : 'un'}installed`"
+        v-for="(fontItem, fontIndex) in fontStatus" :style="{'font-family': fontItem.name}"
+        @click="copyToClipboard(fontItem.name)">
+        <div>[{{fontStatus.length - fontIndex}}]{{ fontItem.name }}【{{fontItem.installed ? '已安装' : '未安装' }}】</div>
+        <div>{{testText}}</div>
+      </div>
+    </section>
+  </section>
+</body>
+
+<script>
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+<!--vue 前端框架-->
+<script src="https://upyun.luckly-mjw.cn/lib/vue.js"></script>
+
+<script>
+  new Vue({
+    el: '#m-app',
+
+    data() {
+      return {
+        tips: '本地字体测试工具', // 顶部提示
+        tipsTimer: -1, // 提示语计数器
+        // fonts: "'PingFang SC','Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif", // 待测试字体
+        fonts: '', // 待测试字体
+        testText: '测试文案：m3u8 网页版提取工具，无需下载软件，打开网站即可下载视频', // 待测试字体
+        fontStatus: [], // 字体状态
+      }
+    },
+
+    created() {
+      this.getFonts();
+      window.addEventListener('keyup', this.onKeyup)
+    },
+
+
+    methods: {
+      // 获取链接中携带的资源链接
+      getFonts() {
+        const currentUrl = new URL(location.href);
+        this.fonts = currentUrl.searchParams.get('fonts') || this.fonts
+      },
+
+      // 退出弹窗
+      onKeyup(event) {
+        if (event.keyCode === 13) { // 键入ESC
+          this.getFileList()
+        }
+      },
+
+      checkFonts() {
+        this.fontStatus = this.fonts.replace(/，/ig, ',').split(',').filter(text => text.trim()).map(fontFamily => ({
+          name: fontFamily,
+          installed: this.checkInstall(fontFamily),
+        }));
+        const currentUrl = new URL(location.href);
+        currentUrl.searchParams.set('fonts', this.fonts);
+        window.history.replaceState(null, '', currentUrl.href)
+        this.tips = `点击复制字体名`
+      },
+
+      async getInstallFonts() {
+        const currentUrl = new URL(location.href);
+        if (currentUrl.protocol !== 'https:') {
+          currentUrl.protocol = 'https'
+          currentUrl.searchParams.set('fonts', this.fonts);
+          alert('该 API 仅支持 https 下使用，即将跳转至 https');
+          location.href = currentUrl.href;
+        }
+        const availableFonts = await window.queryLocalFonts();
+        this.fontStatus = availableFonts.map(fontData => ({
+          name: fontData.family,
+          installed: true,
+        }));
+        this.tips = `点击复制字体名`
+      },
+
+      // 此代码来自 https://www.zhangxinxu.com/wordpress/2018/02/js-detect-suppot-font-family/
+      checkInstall(fontFamily) {
+        if (typeof fontFamily != 'string') {
+          return false;
+        }
+
+        var defaultFontFamily = 'Arial';
+        if (fontFamily.toLowerCase() == defaultFontFamily.toLowerCase()) {
+          return true;
+        }
+
+        var defaultLetter = 'a';
+        var defaultFontSize = 100;
+
+        // 使用该字体绘制的canvas
+        var width = 100, height = 100;
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+        // 全局一致的绘制设定
+        context.textAlign = 'center';
+        context.fillStyle = 'black';
+        context.textBaseline = 'middle';
+        var getFontData = function (fontFamily) {
+          // 清除
+          context.clearRect(0, 0, width, height);
+          // 设置字体
+          context.font = defaultFontSize + 'px ' + fontFamily + ', ' + defaultFontFamily;
+          context.fillText(defaultLetter, width / 2, height / 2);
+
+          var data = context.getImageData(0, 0, width, height).data;
+
+          return [].slice.call(data).filter(function (value) {
+            return value != 0;
+          });
+        };
+
+        return getFontData(defaultFontFamily).join('') !== getFontData(fontFamily).join('');
+      },
+
+      // 拷贝剪切板
+      copyToClipboard(content) {
+        clearTimeout(this.tipsTimer)
+        this.tips = `复制成功: ${content}`
+        this.tipsTimer = setTimeout(() => { this.tips = `点击复制字体名` }, 1000)
+
+        if (!document.queryCommandSupported('copy')) {
+          return false
+        }
+
+        let $input = document.createElement('textarea')
+        $input.style.opacity = '0'
+        $input.value = content
+        document.body.appendChild($input)
+        $input.select()
+
+        const result = document.execCommand('copy')
+        document.body.removeChild($input)
+        $input = null
+
+        return result
+      },
+    }
+
+  })
+</script>
+
+</html>
