@@ -198,6 +198,16 @@
 </head>
 
 <body>
+  <div id="m-loading">
+    页面加载中，请耐心等待...
+    <h1 style="white-space: pre;">
+      快速测试当前机器是否已经安装某字体，获取当前系统所有已安装字体
+      工具链接：https://blog.luckly-mjw.cn/tool-show/local-font-checker/index.html
+      原理教程：https://www.zhangxinxu.com/wordpress/2018/02/js-detect-suppot-font-family/
+      <img src="https://upyun.luckly-mjw.cn/Assets/blog/local-font-checker.png" alt="本地字体测试工具" title="logo"/>
+      <a target="_blank" href="https://blog.luckly-mjw.cn/tool-show/local-font-checker/index.html">点击跳转</a>
+    </h1>
+  </div>
   <section id="m-app" v-cloak>
     <!--顶部操作提示-->
     <section class="m-p-action g-box">{{tips}}</section>
@@ -241,6 +251,7 @@
 <script src="https://upyun.luckly-mjw.cn/lib/vue.js"></script>
 
 <script>
+  document.getElementById('m-loading') && document.getElementById('m-loading').remove()
   new Vue({
     el: '#m-app',
 
